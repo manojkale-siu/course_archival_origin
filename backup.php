@@ -38,8 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 require_sesskey();
 
 $destination_url = 'https://lmsarchive.siu.edu.in/local/coursemigrator/receive.php';
-$receive_token = 'REPLACE_LATER';
-if ($receive_token === 'REPLACE_LATER' || trim($receive_token) === '' || preg_match('/[\r\n]/', $receive_token)) {
+$storedtoken = (string)get_config('local_coursemigrator_origin', 'receivetoken');
+try {
+    $receive_token = \core\encryption::decrypt($storedtoken);
+} catch (moodle_exception $e) {
+    $receive_token = '';
+}
+if (trim($receive_token) === '' || preg_match('/[\r\n]/', $receive_token)) {
     http_response_code(503);
     echo json_encode([
         'success' => false,

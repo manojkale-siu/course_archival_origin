@@ -5,7 +5,7 @@
 ## Install on an institute LMS
 
 1. Upload the release ZIP under **Site administration → Plugins → Install plugins**, or copy `coursemigrator_origin` to `local/coursemigrator_origin` and run the standard Moodle upgrade.
-2. On the institute server, edit `local/coursemigrator_origin/backup.php` and replace `REPLACE_LATER` with the token accepted by the deployed receiver. Keep the real value out of Git.
+2. Go to **Site administration → Plugins → Plugins overview** and choose **Settings** for `coursemigrator_origin`. Enter and save the **Secret token** accepted by the deployed receiver. On an upgrade from a version that used a token in `backup.php`, enter it in Settings again.
 3. Select **Course Archival & Cleanup Manager** from the Moodle custom menu. The common entry URL is `/local/coursemigrator_origin/index.php`.
 
 Installation and upgrade add the menu entry to **Custom menu items**. Uninstall removes the plugin entry and preserves other menu items. Site administrators and Moodle managers land on the migration page and can access the migration report. Active Directors land on Director Approval. If a user qualifies for both, they land on the migration page and can open Director Approval from its toolbar. Other logged-in users see an access-denied message.
