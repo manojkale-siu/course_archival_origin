@@ -6,7 +6,9 @@
 
 1. Upload the release ZIP under **Site administration → Plugins → Install plugins**, or copy `coursemigrator_origin` to `local/coursemigrator_origin` and run the standard Moodle upgrade.
 2. On the institute server, edit `local/coursemigrator_origin/backup.php` and replace `REPLACE_LATER` with the token accepted by the deployed receiver. Keep the real value out of Git.
-3. Open `/local/coursemigrator_origin/index.php` for course selection, `/local/coursemigrator_origin/director_approval.php` for approvals, and `/local/coursemigrator_origin/coursemigrator_report.php` for reporting.
+3. Select **Course Archival & Cleanup Manager** from the Moodle custom menu. The common entry URL is `/local/coursemigrator_origin/index.php`.
+
+Installation and upgrade add the menu entry to **Custom menu items** and preserve existing entries. Site administrators and Moodle managers land on the migration page and can access the migration report. Active Directors land on Director Approval. If a user qualifies for both, they land on the migration page and can open Director Approval from its toolbar. Other logged-in users see an access-denied message.
 
 Installation creates missing migration and approval tables and reuses existing tables and records. The tables are retained on uninstall.
 

@@ -17,10 +17,13 @@
  * Related files: index.php, get_metadata.php, receive.php, cleanup.php.
  */
 
+use local_coursemigrator_origin\access;
+
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 
 require_login();
+access::require_management(true);
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

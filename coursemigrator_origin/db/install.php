@@ -29,6 +29,8 @@ function xmldb_local_coursemigrator_origin_install(): void {
             }
         }
     }
+
+    \local_coursemigrator_origin\custom_menu::add();
 }
 
 /**

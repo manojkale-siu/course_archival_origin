@@ -17,6 +17,8 @@
  */
 
 
+use local_coursemigrator_origin\access;
+
 require_once(__DIR__ . '/../../config.php');
 
 require_login();
@@ -30,6 +32,7 @@ global $DB, $OUTPUT, $PAGE;
 // $PAGE->set_url(new moodle_url('/coursemigrator/report.php'));
 $PAGE->set_url(new moodle_url('/local/coursemigrator_origin/coursemigrator_report.php'));
 $PAGE->set_context(context_system::instance());
+access::require_management();
 // $PAGE->set_title('Course Migrator');
 // $PAGE->set_heading('Course Migration Report');
 $PAGE->set_title('Course Archival & Cleanup Manager');

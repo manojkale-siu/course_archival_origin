@@ -14,9 +14,12 @@
  * Related files: index.php, ajax.php, backup.php.
  */
 
+use local_coursemigrator_origin\access;
+
 require_once(__DIR__ . '/../../config.php');
 
 require_login();
+access::require_management(true);
 
 global $DB, $CFG, $USER;
 

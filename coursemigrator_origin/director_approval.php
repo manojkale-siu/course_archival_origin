@@ -15,6 +15,8 @@
  * Related files: index.php, ajax.php, get_metadata.php, backup.php.
  */
 
+use local_coursemigrator_origin\access;
+
 require_once(__DIR__ . '/../../config.php');
 
 require_login();
@@ -37,67 +39,6 @@ function director_approval_table_exists(): bool {
     global $DB;
 
     return $DB->get_manager()->table_exists(new xmldb_table('course_migrator_category_approval'));
-}
-
-/**
- * Confirm that the current user is an authorized Director.
- *
- * Required profile fields:
- * User Category = Staff
- * Designation = Director
- * User Status = Active
- *
- * Username must start with t or n.
- * Moodle account must not be deleted or suspended.
- *
- * @param int $userid
- * @return bool
- */
-
-function director_approval_is_director(int $userid): bool {
-    global $DB;
-
-    $sql = "SELECT u.id
-              FROM {user} u
-              JOIN {user_info_data} uc
-                ON uc.userid = u.id
-              JOIN {user_info_field} fc
-                ON fc.id = uc.fieldid
-              JOIN {user_info_data} ud
-                ON ud.userid = u.id
-              JOIN {user_info_field} fd
-                ON fd.id = ud.fieldid
-              JOIN {user_info_data} us
-                ON us.userid = u.id
-              JOIN {user_info_field} fs
-                ON fs.id = us.fieldid
-             WHERE u.id = :userid
-               AND u.deleted = 0
-               AND u.suspended = 0
-               AND (
-                    LOWER(u.username) LIKE :teaching
-                    OR LOWER(u.username) LIKE :nonteaching
-               )
-               AND LOWER(TRIM(fc.shortname)) = :categoryfield
-               AND LOWER(TRIM(uc.data)) = :categoryvalue
-               AND LOWER(TRIM(fd.shortname)) = :designationfield
-               AND LOWER(TRIM(ud.data)) = :designationvalue
-               AND LOWER(TRIM(fs.shortname)) = :statusfield
-               AND LOWER(TRIM(us.data)) = :statusvalue";
-
-    $params = [
-        'userid' => $userid,
-        'teaching' => 't%',
-        'nonteaching' => 'n%',
-        'categoryfield' => 'user_category',
-        'categoryvalue' => 'staff',
-        'designationfield' => 'designation',
-        'designationvalue' => 'director',
-        'statusfield' => 'user_status',
-        'statusvalue' => 'active',
-    ];
-
-    return $DB->record_exists_sql($sql, $params);
 }
 
 /**
@@ -353,26 +294,8 @@ function director_approval_render_children(
 // 1. Validate Director access.
 // ---------------------------------------------------------
 
-if (!director_approval_is_director((int)$USER->id)) {
-    http_response_code(403);
-
-    echo $OUTPUT->header();
-
-    echo html_writer::div(
-        html_writer::tag(
-            'h4',
-            'Access Denied',
-            ['class' => 'alert-heading']
-        ) .
-        html_writer::tag(
-            'p',
-            'Sorry. Only Director can access this.'
-        ),
-        'alert alert-danger'
-    );
-
-    echo $OUTPUT->footer();
-    exit;
+if (!access::is_director()) {
+    access::deny('directoraccessdenied');
 }
 
 // ---------------------------------------------------------
@@ -829,11 +752,10 @@ echo $OUTPUT->header();
             </p>
         </div>
 
-        <a href="<?php
-            echo new moodle_url('/local/coursemigrator_origin/coursemigrator_report.php');
-        ?>" class="btn btn-secondary">
-            Back to Report
-        </a>
+        <?php if (access::can_manage()): ?>
+            <a href="<?php echo new moodle_url('/local/coursemigrator_origin/coursemigrator_report.php'); ?>"
+               class="btn btn-secondary">Back to Report</a>
+        <?php endif; ?>
 
     </div>
 
