@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/coursemigrator/db" VERSION="20261123" COMMENT="Course Migrator Origin tables"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+    <TABLES>
+        <TABLE NAME="course_migrator" COMMENT="Course Migrator Origin data">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="source_course_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="source_course_fullname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="source_course_shortname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="course_metadata_json" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="destination_course_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="destination_course_fullname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="destination_course_shortname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="institute" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="program" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="batch" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="semester" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="specialization" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="mbz_filename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="backup_status" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" DEFAULT="pending"/>
+                <FIELD NAME="backup_message" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="destination_status" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" DEFAULT="pending"/>
+                <FIELD NAME="destination_message" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="source_snapshot" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="destination_snapshot" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="verification_status" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" DEFAULT="pending"/>
+                <FIELD NAME="verification_message" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="verification_details" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="course_cleanup_status" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" DEFAULT="pending"/>
+                <FIELD NAME="course_cleanup_message" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="recyclebin_cleanup_status" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" DEFAULT="pending"/>
+                <FIELD NAME="recyclebin_cleanup_message" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="user_cleanup_status" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" DEFAULT="pending"/>
+                <FIELD NAME="user_cleanup_message" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="error_message" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="created_at" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="updated_at" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="idx_source_course_id" UNIQUE="false" FIELDS="source_course_id"/>
+                <INDEX NAME="idx_destination_course_id" UNIQUE="false" FIELDS="destination_course_id"/>
+                <INDEX NAME="idx_backup_status" UNIQUE="false" FIELDS="backup_status"/>
+                <INDEX NAME="idx_verification_status" UNIQUE="false" FIELDS="verification_status"/>
+                <INDEX NAME="idx_course_cleanup_status" UNIQUE="false" FIELDS="course_cleanup_status"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="course_migrator_category_approval" COMMENT="Course Migrator Origin data">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="category_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="approved_course_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="program_category_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="approval_status" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" DEFAULT="approved"/>
+                <FIELD NAME="approved_by" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="approved_at" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="revoked_by" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="revoked_at" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="comments" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="created_at" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="updated_at" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="uq_category_id" UNIQUE="true" FIELDS="category_id"/>
+                <INDEX NAME="uq_approved_course_id" UNIQUE="true" FIELDS="approved_course_id"/>
+                <INDEX NAME="idx_program_category_id" UNIQUE="false" FIELDS="program_category_id"/>
+                <INDEX NAME="idx_approval_status" UNIQUE="false" FIELDS="approval_status"/>
+                <INDEX NAME="idx_approved_by" UNIQUE="false" FIELDS="approved_by"/>
+            </INDEXES>
+        </TABLE>
+    </TABLES>
+</XMLDB>

@@ -35,7 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 require_sesskey();
 
 $destination_url = 'https://lmsarchive.siu.edu.in/local/coursemigrator/receive.php';
-$receive_token = 'AUTH TOEKN FOR COMMUNIATION BETWEEN TO SERVERS';
+$receive_token = $CFG->local_coursemigrator_receive_token ?? '';
+if (!is_string($receive_token) || trim($receive_token) === '' || preg_match('/[\r\n]/', $receive_token)) {
+    http_response_code(503);
+    echo json_encode([
+        'success' => false,
+        'message' => get_string('missingreceivetoken', 'local_coursemigrator'),
+    ]);
+    exit;
+}
 
 $logs = [];
 $migrationid = 0;

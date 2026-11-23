@@ -28,7 +28,7 @@ global $DB, $OUTPUT, $PAGE;
 // ---------------------------------------------------------
 
 // $PAGE->set_url(new moodle_url('/coursemigrator/report.php'));
-$PAGE->set_url(new moodle_url('/attendance-report/coursemigrator/coursemigrator_report.php'));
+$PAGE->set_url(new moodle_url('/local/coursemigrator/coursemigrator_report.php'));
 $PAGE->set_context(context_system::instance());
 // $PAGE->set_title('Course Migrator');
 // $PAGE->set_heading('Course Migration Report');
@@ -74,7 +74,7 @@ $page = optional_param('page', 0, PARAM_INT);
 // $totalrecords = $DB->count_records('course_migrator'); // we are using this later for filtering so that is why it is commented.
 
 // $baseurl = new moodle_url('/coursemigrator/report.php');
-$baseurl = new moodle_url('/attendance-report/coursemigrator/coursemigrator_report.php');
+$baseurl = new moodle_url('/local/coursemigrator/coursemigrator_report.php');
 
 // ---------------------------------------------------------
 // Search + Filters
@@ -455,7 +455,7 @@ echo $OUTPUT->header();
     <div class="d-flex justify-content-right align-items-center mb-3">
         <!--<h3>Course Migration Report</h3>-->
 
-        <a href="<?php echo new moodle_url('/attendance-report/coursemigrator/'); ?>"
+        <a href="<?php echo new moodle_url('/local/coursemigrator/'); ?>"
            class="btn btn-secondary">
             Back
         </a>
