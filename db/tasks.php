@@ -7,8 +7,8 @@ $tasks = [
     [
         'classname' => '\local_coursemigrator_origin\task\user_cleanup_cron',
         'blocking' => 0,
-        'minute' => 'R',
-        'hour' => '2',
+        'minute' => '0',
+        'hour' => '11',
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*',

@@ -8,7 +8,7 @@
 2. On the institute server, edit `local/coursemigrator_origin/backup.php` and replace `REPLACE_LATER` with the token accepted by the deployed receiver. Keep the real value out of Git.
 3. Select **Course Archival & Cleanup Manager** from the Moodle custom menu. The common entry URL is `/local/coursemigrator_origin/index.php`.
 
-Installation and upgrade add the menu entry to **Custom menu items** and preserve existing entries. Site administrators and Moodle managers land on the migration page and can access the migration report. Active Directors land on Director Approval. If a user qualifies for both, they land on the migration page and can open Director Approval from its toolbar. Other logged-in users see an access-denied message.
+Installation and upgrade add the menu entry to **Custom menu items**. Uninstall removes the plugin entry and preserves other menu items. Site administrators and Moodle managers land on the migration page and can access the migration report. Active Directors land on Director Approval. If a user qualifies for both, they land on the migration page and can open Director Approval from its toolbar. Other logged-in users see an access-denied message.
 
 Installation creates missing migration and approval tables and reuses existing tables and records. For Moodle 4.0.6 compatibility, installation or upgrade renames the legacy approval table to `course_migrator_approval` when the new table is absent. The tables are retained on uninstall.
 
@@ -16,7 +16,7 @@ When switching from the standalone deployment, update links from `/attendance-re
 
 ## Scheduled user cleanup
 
-Moodle registers **Course Migrator user cleanup** automatically. The implementation is in `classes/task/user_cleanup_cron.php`. It runs daily during the 02:00 hour by default through Moodle's standard cron. Change the schedule under **Site administration → Server → Scheduled tasks**.
+Moodle registers **Course Migrator user cleanup** automatically. The implementation is in `classes/task/user_cleanup_cron.php`. It runs daily at 11:00 AM in the Moodle server timezone through the standard Moodle cron. Find it under **Site administration → Server → Scheduled tasks**.
 
 Each run appends timestamped entries to `logs/user_cleanup_cron.log` beside `public_html`. On layouts without a `public_html` ancestor, the task uses `logs` inside Moodle's data directory. The Moodle cron account needs write access to the log directory and file.
 
