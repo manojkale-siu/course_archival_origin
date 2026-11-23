@@ -38,7 +38,7 @@ $PAGE->requires->css( new moodle_url('https://cdn.jsdelivr.net/npm/bootstrap@5.3
 function director_approval_table_exists(): bool {
     global $DB;
 
-    return $DB->get_manager()->table_exists(new xmldb_table('course_migrator_category_approval'));
+    return $DB->get_manager()->table_exists(new xmldb_table('course_migrator_approval'));
 }
 
 /**
@@ -368,7 +368,7 @@ if (optional_param('ajax', '', PARAM_ALPHA) === 'children') {
     $approvedcourses = [];
 
     $approvalrecords = $DB->get_records(
-        'course_migrator_category_approval',
+        'course_migrator_approval',
         ['approval_status' => 'approved'],
         '',
         'id, category_id, approved_course_id'
@@ -430,7 +430,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && optional_param('revoke', 0, PARAM_B
             // Revoke selected category approvals.
             foreach ($categoryids as $categoryid) {
                 $approval = $DB->get_record(
-                    'course_migrator_category_approval',
+                    'course_migrator_approval',
                     ['category_id' => $categoryid],
                     '*',
                     IGNORE_MISSING
@@ -444,7 +444,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && optional_param('revoke', 0, PARAM_B
                     $approval->updated_at = $now;
 
                     $DB->update_record(
-                        'course_migrator_category_approval',
+                        'course_migrator_approval',
                         $approval
                     );
 
@@ -455,7 +455,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && optional_param('revoke', 0, PARAM_B
             // Revoke selected individual course approvals.
             foreach ($courseids as $courseid) {
                 $approval = $DB->get_record(
-                    'course_migrator_category_approval',
+                    'course_migrator_approval',
                     ['approved_course_id' => $courseid],
                     '*',
                     IGNORE_MISSING
@@ -469,7 +469,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && optional_param('revoke', 0, PARAM_B
                     $approval->updated_at = $now;
 
                     $DB->update_record(
-                        'course_migrator_category_approval',
+                        'course_migrator_approval',
                         $approval
                     );
 
@@ -544,7 +544,7 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 );
 
                 $existing = $DB->get_record(
-                    'course_migrator_category_approval',
+                    'course_migrator_approval',
                     ['category_id' => $categoryid],
                     '*',
                     IGNORE_MISSING
@@ -561,7 +561,7 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $existing->updated_at = $now;
 
                     $DB->update_record(
-                        'course_migrator_category_approval',
+                        'course_migrator_approval',
                         $existing
                     );
                 } else {
@@ -580,7 +580,7 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ];
 
                     $DB->insert_record(
-                        'course_migrator_category_approval',
+                        'course_migrator_approval',
                         $record
                     );
                 }
@@ -614,7 +614,7 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 );
 
                 $existing = $DB->get_record(
-                    'course_migrator_category_approval',
+                    'course_migrator_approval',
                     ['approved_course_id' => $courseid],
                     '*',
                     IGNORE_MISSING
@@ -631,7 +631,7 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $existing->updated_at = $now;
 
                     $DB->update_record(
-                        'course_migrator_category_approval',
+                        'course_migrator_approval',
                         $existing
                     );
                 } else {
@@ -650,7 +650,7 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ];
 
                     $DB->insert_record(
-                        'course_migrator_category_approval',
+                        'course_migrator_approval',
                         $record
                     );
                 }
@@ -682,7 +682,7 @@ $approvedcategories = [];
 $approvedcourses = [];
 
 $approvalrecords = $DB->get_records(
-    'course_migrator_category_approval',
+    'course_migrator_approval',
     ['approval_status' => 'approved'],
     '',
     'id, category_id, approved_course_id'

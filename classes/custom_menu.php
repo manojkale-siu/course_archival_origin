@@ -22,7 +22,7 @@ final class custom_menu {
         }
 
         $line = 'Course Archival & Cleanup Manager|' . $url;
-        $separator = $menu === '' || str_ends_with($menu, "\n") ? '' : "\n";
+        $separator = $menu === '' || substr($menu, -1) === "\n" ? '' : "\n";
         set_config('custommenuitems', $menu . $separator . $line);
     }
 }

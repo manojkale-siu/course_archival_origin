@@ -6,7 +6,8 @@ namespace local_coursemigrator_origin\task;
 defined('MOODLE_INTERNAL') || die();
 
 class user_cleanup_cron extends \core\task\scheduled_task {
-    private string $logfile;
+    /** @var string Path to the persistent cron log. */
+
 
     public function get_name(): string {
         return get_string('taskusercleanup', 'local_coursemigrator_origin');
@@ -48,8 +49,8 @@ class user_cleanup_cron extends \core\task\scheduled_task {
             throw new \RuntimeException('Could not create the user cleanup log directory: ' . $directory);
         }
         $resolved = realpath($directory);
-        if ($resolved === false || str_starts_with(strtolower($resolved . DIRECTORY_SEPARATOR),
-                strtolower($root . DIRECTORY_SEPARATOR))) {
+        if ($resolved === false || stripos($resolved . DIRECTORY_SEPARATOR,
+                $root . DIRECTORY_SEPARATOR) === 0) {
             throw new \RuntimeException('The user cleanup log directory must be outside the web root.');
         }
         $file = $resolved . DIRECTORY_SEPARATOR . 'user_cleanup_cron.log';

@@ -49,7 +49,7 @@ $programs = $DB->get_records_sql(
             /* Program itself or a descendant category is approved */
             EXISTS (
                 SELECT 1
-                  FROM {course_migrator_category_approval} a
+                  FROM {course_migrator_approval} a
                   JOIN {course_categories} ac
                     ON ac.id = a.category_id
                  WHERE a.approval_status = 'approved'
@@ -64,7 +64,7 @@ $programs = $DB->get_records_sql(
             /* An individual course under this Program is approved */
             EXISTS (
                 SELECT 1
-                  FROM {course_migrator_category_approval} a
+                  FROM {course_migrator_approval} a
                   JOIN {course} c
                     ON c.id = a.approved_course_id
                   JOIN {course_categories} coursecat

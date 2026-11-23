@@ -1,6 +1,6 @@
 # Course Archival and Cleanup Manager Origin
 
-`coursemigrator_origin` is a Moodle 4.5+ local plugin for institute LMS sites. It sends backups to the existing R-LMS receiver at `https://lmsarchive.siu.edu.in/local/coursemigrator/receive.php`.
+`coursemigrator_origin` is a Moodle 4.0.6+ local plugin for institute LMS sites. It sends backups to the existing R-LMS receiver at `https://lmsarchive.siu.edu.in/local/coursemigrator/receive.php`.
 
 ## Install on an institute LMS
 
@@ -10,7 +10,7 @@
 
 Installation and upgrade add the menu entry to **Custom menu items** and preserve existing entries. Site administrators and Moodle managers land on the migration page and can access the migration report. Active Directors land on Director Approval. If a user qualifies for both, they land on the migration page and can open Director Approval from its toolbar. Other logged-in users see an access-denied message.
 
-Installation creates missing migration and approval tables and reuses existing tables and records. The tables are retained on uninstall.
+Installation creates missing migration and approval tables and reuses existing tables and records. For Moodle 4.0.6 compatibility, installation or upgrade renames the legacy approval table to `course_migrator_approval` when the new table is absent. The tables are retained on uninstall.
 
 When switching from the standalone deployment, update links from `/attendance-report/coursemigrator/` and disable the old standalone cron entry. If you installed the earlier Origin plugin as `local_coursemigrator`, uninstall that Origin plugin before installing `local_coursemigrator_origin`. Moodle treats them as separate plugins.
 

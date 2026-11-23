@@ -10,7 +10,17 @@ function xmldb_local_coursemigrator_origin_install(): void {
     global $DB;
 
     $manager = $DB->get_manager();
-    $schema = $manager->load_xmldb_file(__DIR__ . '/origin_schema.xml')->getStructure();
+    $schemafile = new xmldb_file(__DIR__ . '/origin_schema.xml');
+    if (!$schemafile->loadXMLStructure() || !$schemafile->isLoaded()) {
+        throw new ddl_exception('ddlxmlfileerror', null, 'Could not load the Course Migrator Origin schema.');
+    }
+    $schema = $schemafile->getStructure();
+    $legacyapproval = new xmldb_table('course_migrator_category_approval');
+    $approval = $schema->getTable('course_migrator_approval');
+    if (!$manager->table_exists($approval) && $manager->table_exists($legacyapproval)) {
+        $manager->rename_table($legacyapproval, $approval->getName());
+    }
+
     foreach ($schema->getTables() as $table) {
         if (!$manager->table_exists($table)) {
             $manager->create_table($table);

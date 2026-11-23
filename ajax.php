@@ -45,7 +45,7 @@ function coursemigrator_category_is_approved(int $categoryid): bool {
 
     while ($category) {
         $approved = $DB->record_exists(
-            'course_migrator_category_approval',
+            'course_migrator_approval',
             [
                 'category_id' => $category->id,
                 'approval_status' => 'approved',
@@ -98,7 +98,7 @@ function coursemigrator_program_has_approval(int $programid): bool {
 
     $categoryapproval = $DB->record_exists_sql(
         "SELECT 1
-           FROM {course_migrator_category_approval} a
+           FROM {course_migrator_approval} a
            JOIN {course_categories} cc
              ON cc.id = a.category_id
           WHERE a.approval_status = :status
@@ -118,7 +118,7 @@ function coursemigrator_program_has_approval(int $programid): bool {
     // or one of its descendant categories.
     $courseapproval = $DB->record_exists_sql(
         "SELECT 1
-           FROM {course_migrator_category_approval} a
+           FROM {course_migrator_approval} a
            JOIN {course} c
              ON c.id = a.approved_course_id
            JOIN {course_categories} cc
@@ -173,7 +173,7 @@ function coursemigrator_get_approved_child_categories(int $parentid): array {
 
             $visible = $DB->record_exists_sql(
                 "SELECT 1
-                   FROM {course_migrator_category_approval} a
+                   FROM {course_migrator_approval} a
                    JOIN {course} c
                      ON c.id = a.approved_course_id
                    JOIN {course_categories} cc
@@ -228,7 +228,7 @@ function coursemigrator_get_approved_courses(int $categoryid): array {
         }
 
         $individuallyapproved = $DB->record_exists(
-            'course_migrator_category_approval',
+            'course_migrator_approval',
             [
                 'approved_course_id' => $course->id,
                 'approval_status' => 'approved',

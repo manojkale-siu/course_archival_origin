@@ -19,7 +19,7 @@ final class access {
     }
 
     /** Return a localized HTTP 403 response. */
-    public static function deny(string $reason, bool $json = false): never {
+    public static function deny(string $reason, bool $json = false): void {
         global $OUTPUT, $PAGE;
 
         http_response_code(403);

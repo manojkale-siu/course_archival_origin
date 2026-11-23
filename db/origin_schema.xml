@@ -49,7 +49,7 @@
                 <INDEX NAME="idx_course_cleanup_status" UNIQUE="false" FIELDS="course_cleanup_status"/>
             </INDEXES>
         </TABLE>
-        <TABLE NAME="course_migrator_category_approval" COMMENT="Course Migrator Origin data">
+        <TABLE NAME="course_migrator_approval" COMMENT="Course Migrator Origin data">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="category_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>

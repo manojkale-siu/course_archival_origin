@@ -14,5 +14,10 @@ function xmldb_local_coursemigrator_origin_upgrade(int $oldversion): bool {
         \local_coursemigrator_origin\custom_menu::add();
         upgrade_plugin_savepoint(true, 2026112302, 'local', 'coursemigrator_origin');
     }
+    if ($oldversion < 2026112303) {
+        require_once(__DIR__ . '/install.php');
+        xmldb_local_coursemigrator_origin_install();
+        upgrade_plugin_savepoint(true, 2026112303, 'local', 'coursemigrator_origin');
+    }
     return true;
 }
