@@ -22,7 +22,7 @@ require_login();
 $context = context_system::instance();
 
 $PAGE->set_context($context);
-$PAGE->set_url(new moodle_url('/local/coursemigrator/index.php'));
+$PAGE->set_url(new moodle_url('/local/coursemigrator_origin/index.php'));
 // $PAGE->set_title('Course Migrator');
 $PAGE->set_title('Course Archival & Cleanup Manager');
 // $PAGE->set_heading('Course Migrator');

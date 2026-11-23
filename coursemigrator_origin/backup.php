@@ -35,12 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 require_sesskey();
 
 $destination_url = 'https://lmsarchive.siu.edu.in/local/coursemigrator/receive.php';
-$receive_token = $CFG->local_coursemigrator_receive_token ?? '';
-if (!is_string($receive_token) || trim($receive_token) === '' || preg_match('/[\r\n]/', $receive_token)) {
+$receive_token = 'REPLACE_LATER';
+if ($receive_token === 'REPLACE_LATER' || trim($receive_token) === '' || preg_match('/[\r\n]/', $receive_token)) {
     http_response_code(503);
     echo json_encode([
         'success' => false,
-        'message' => get_string('missingreceivetoken', 'local_coursemigrator'),
+        'message' => get_string('missingreceivetoken', 'local_coursemigrator_origin'),
     ]);
     exit;
 }

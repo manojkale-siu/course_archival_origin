@@ -21,7 +21,7 @@ require_login();
 
 global $DB, $CFG, $USER, $OUTPUT, $PAGE;
 
-$PAGE->set_url(new moodle_url('/local/coursemigrator/director_approval.php'));
+$PAGE->set_url(new moodle_url('/local/coursemigrator_origin/director_approval.php'));
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title('Director Approval - Course Archival & Cleanup Manager');
 $PAGE->set_heading('Director Approval - Course Archival & Cleanup Manager');
@@ -830,7 +830,7 @@ echo $OUTPUT->header();
         </div>
 
         <a href="<?php
-            echo new moodle_url('/local/coursemigrator/coursemigrator_report.php');
+            echo new moodle_url('/local/coursemigrator_origin/coursemigrator_report.php');
         ?>" class="btn btn-secondary">
             Back to Report
         </a>
@@ -962,7 +962,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const endpoint = <?php
         echo json_encode(
             (new moodle_url(
-                '/local/coursemigrator/director_approval.php'
+                '/local/coursemigrator_origin/director_approval.php'
             ))->out(false)
         );
     ?>;

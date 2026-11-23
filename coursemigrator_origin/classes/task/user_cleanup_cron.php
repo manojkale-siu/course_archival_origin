@@ -1,23 +1,83 @@
 <?php
 // Scheduled account cleanup for migrated course batches.
 
-namespace local_coursemigrator\task;
+namespace local_coursemigrator_origin\task;
 
 defined('MOODLE_INTERNAL') || die();
 
-class user_cleanup extends \core\task\scheduled_task {
+class user_cleanup_cron extends \core\task\scheduled_task {
+    private string $logfile;
+
     public function get_name(): string {
-        return get_string('taskusercleanup', 'local_coursemigrator');
+        return get_string('taskusercleanup', 'local_coursemigrator_origin');
     }
 
     public function execute(): void {
+        $this->logfile = $this->get_log_file();
+        $this->log('User cleanup cron run started.');
+        try {
+            $this->run_cleanup();
+        } catch (\Throwable $e) {
+            $this->log('User cleanup cron run failed: ' . $e->getMessage());
+            throw $e;
+        } finally {
+            $this->log('User cleanup cron run ended.');
+        }
+    }
+
+    /**
+     * Use a logs directory beside public_html, or in Moodle data on other layouts.
+     */
+    private function get_log_file(): string {
+        global $CFG;
+
+        $root = realpath($CFG->dirroot);
+        if ($root === false) {
+            throw new \RuntimeException('Could not resolve the Moodle installation directory.');
+        }
+        $directory = $CFG->dataroot . '/logs';
+        for ($path = $root; dirname($path) !== $path; $path = dirname($path)) {
+            if (strcasecmp(basename($path), 'public_html') === 0) {
+                $directory = dirname($path) . '/logs';
+                $root = $path;
+                break;
+            }
+        }
+
+        if (!is_dir($directory) && !@mkdir($directory, 0700, true) && !is_dir($directory)) {
+            throw new \RuntimeException('Could not create the user cleanup log directory: ' . $directory);
+        }
+        $resolved = realpath($directory);
+        if ($resolved === false || str_starts_with(strtolower($resolved . DIRECTORY_SEPARATOR),
+                strtolower($root . DIRECTORY_SEPARATOR))) {
+            throw new \RuntimeException('The user cleanup log directory must be outside the web root.');
+        }
+        $file = $resolved . DIRECTORY_SEPARATOR . 'user_cleanup_cron.log';
+        if (is_link($file)) {
+            throw new \RuntimeException('The user cleanup log must not be a symbolic link.');
+        }
+        return $file;
+    }
+
+    /**
+     * Record each message in Moodle task output and append it to the shared log.
+     */
+    private function log(string $message): void {
+        $message = str_replace(["\r", "\n"], [' ', ' '], $message);
+        $line = date('c') . ' ' . $message . PHP_EOL;
+        if (@file_put_contents($this->logfile, $line, FILE_APPEND | LOCK_EX) !== strlen($line)) {
+            throw new \RuntimeException('Could not append to the user cleanup log: ' . $this->logfile);
+        }
+        mtrace($message);
+    }
+
+    private function run_cleanup(): void {
         global $DB;
 
         // An unset setting keeps scheduled runs in dry-run mode.
-        $dryrun = (string)get_config('local_coursemigrator', 'usercleanupdryrun') !== '0';
+        $dryrun = (string)get_config('local_coursemigrator_origin', 'usercleanupdryrun') !== '0';
 
-        mtrace('User cleanup cron started.');
-        mtrace('Execution mode: ' . ($dryrun ? 'DRY RUN' : 'LIVE'));
+        $this->log('Execution mode: ' . ($dryrun ? 'DRY RUN' : 'LIVE'));
 
 
         // Step 1: Check the custom table.
@@ -29,9 +89,9 @@ class user_cleanup extends \core\task\scheduled_task {
                 throw new \coding_exception('The course_migrator table does not exist.');
             }
 
-            mtrace('Step 1: course_migrator table exists.');
+            $this->log('Step 1: course_migrator table exists.');
         } catch (\Throwable $e) {
-            mtrace('STOP: Table check failed: ' . $e->getMessage());
+            $this->log('STOP: Table check failed: ' . $e->getMessage());
             throw $e;
         }
 
@@ -48,16 +108,16 @@ class user_cleanup extends \core\task\scheduled_task {
             );
 
             if (empty($records)) {
-                mtrace('No skipped program/batch combinations found.');
+                $this->log('No skipped program/batch combinations found.');
                 return;
             }
 
-            mtrace(
+            $this->log(
                 'Step 2: Found ' . count($records) .
                 ' distinct program/batch combination(s).'
             );
         } catch (\Throwable $e) {
-            mtrace('STOP: Unable to fetch records: ' . $e->getMessage());
+            $this->log('STOP: Unable to fetch records: ' . $e->getMessage());
             throw $e;
         }
 
@@ -71,19 +131,19 @@ class user_cleanup extends \core\task\scheduled_task {
 
         // Step 3: Process every distinct program/batch combination.
         foreach ($records as $record) {
-            mtrace('----------------------------------------');
-            mtrace('Processing record ID: ' . $record->id);
+            $this->log('----------------------------------------');
+            $this->log('Processing record ID: ' . $record->id);
 
             $program = trim((string)($record->program ?? ''));
             $batch = trim((string)($record->batch ?? ''));
 
             if ($program === '' || $batch === '') {
-                mtrace('SKIP: Program or batch is empty.');
+                $this->log('SKIP: Program or batch is empty.');
                 continue;
             }
 
-            mtrace('Program: ' . $program);
-            mtrace('Batch: ' . $batch);
+            $this->log('Program: ' . $program);
+            $this->log('Batch: ' . $batch);
 
             // Step 3A: Find the parent category and its program ID.
             if (!array_key_exists($program, $programIdCache)) {
@@ -101,7 +161,7 @@ class user_cleanup extends \core\task\scheduled_task {
                     if (count($categories) !== 1) {
                         $programIdCache[$program] = null;
 
-                        mtrace(
+                        $this->log(
                             'SKIP: Parent category missing or ambiguous: ' .
                             $program
                         );
@@ -118,22 +178,22 @@ class user_cleanup extends \core\task\scheduled_task {
                         if ($programId === '') {
                             $programIdCache[$program] = null;
 
-                            mtrace(
+                            $this->log(
                                 'SKIP: Category idnumber contains no digits: ' .
                                 $program
                             );
                         } else {
                             $programIdCache[$program] = $programId;
 
-                            mtrace('Category ID: ' . $category->id);
-                            mtrace('Category idnumber: ' . $category->idnumber);
-                            mtrace('Extracted program ID: ' . $programId);
+                            $this->log('Category ID: ' . $category->id);
+                            $this->log('Category idnumber: ' . $category->idnumber);
+                            $this->log('Extracted program ID: ' . $programId);
                         }
                     }
                 } catch (\Throwable $e) {
                     $programIdCache[$program] = null;
 
-                    mtrace(
+                    $this->log(
                         'ERROR: Category lookup failed: ' . $e->getMessage()
                     );
                 }
@@ -149,16 +209,16 @@ class user_cleanup extends \core\task\scheduled_task {
             $batchPrefix = $this->get_batch_prefix($batch);
 
             if ($batchPrefix === null) {
-                mtrace('SKIP: Cannot extract batch starting year: ' . $batch);
+                $this->log('SKIP: Cannot extract batch starting year: ' . $batch);
                 continue;
             }
 
-            mtrace('Extracted batch prefix: ' . $batchPrefix);
+            $this->log('Extracted batch prefix: ' . $batchPrefix);
 
             // Step 4: Find users without active enrolments.
             $usernamePrefix = $batchPrefix . $programId;
 
-            mtrace('Searching username prefix: ' . $usernamePrefix);
+            $this->log('Searching username prefix: ' . $usernamePrefix);
 
             $sql = "SELECT u.id, u.username
                       FROM {user} u
@@ -186,7 +246,7 @@ class user_cleanup extends \core\task\scheduled_task {
                 if (empty($users) && substr($programId, 0, 1) !== '0') {
                     $fallbackPrefix = $batchPrefix . '0' . $programId;
 
-                    mtrace(
+                    $this->log(
                         'No matching users. Retrying with prefix: ' .
                         $fallbackPrefix
                     );
@@ -200,11 +260,11 @@ class user_cleanup extends \core\task\scheduled_task {
                 }
 
                 if (empty($users)) {
-                    mtrace('No matching unenrolled users found.');
+                    $this->log('No matching unenrolled users found.');
                     continue;
                 }
 
-                mtrace('Matching unenrolled users: ' . count($users));
+                $this->log('Matching unenrolled users: ' . count($users));
 
                 $totalCandidates += count($users);
                 $batchDeletionFailed = false;
@@ -212,10 +272,10 @@ class user_cleanup extends \core\task\scheduled_task {
 
                 // Step 5: Delete matching users, only in live mode.
                 foreach ($users as $matchedUser) {
-                    mtrace('Candidate username: ' . $matchedUser->username);
+                    $this->log('Candidate username: ' . $matchedUser->username);
 
                     if ($dryrun) {
-                        mtrace(
+                        $this->log(
                             'DRY RUN: User would be deleted: ' .
                             $matchedUser->username
                         );
@@ -232,7 +292,7 @@ class user_cleanup extends \core\task\scheduled_task {
                         );
 
                         if (!$user) {
-                            mtrace(
+                            $this->log(
                                 'ERROR: User no longer exists or is already deleted: ' .
                                 $matchedUser->username
                             );
@@ -243,7 +303,7 @@ class user_cleanup extends \core\task\scheduled_task {
 
                         // Never delete site administrator accounts.
                         if (is_siteadmin($user)) {
-                            mtrace(
+                            $this->log(
                                 'PROTECTED: Skipping site administrator: ' .
                                 $user->username
                             );
@@ -267,7 +327,7 @@ class user_cleanup extends \core\task\scheduled_task {
                             $remainingUser &&
                             (int)$remainingUser->deleted !== 1
                         ) {
-                            mtrace(
+                            $this->log(
                                 'ERROR: Deletion verification failed for user ID ' .
                                 $user->id
                             );
@@ -276,7 +336,7 @@ class user_cleanup extends \core\task\scheduled_task {
                             continue;
                         }
 
-                        mtrace(
+                        $this->log(
                             'DELETED: ' . $user->username .
                             ' (ID: ' . $user->id . ')'
                         );
@@ -284,7 +344,7 @@ class user_cleanup extends \core\task\scheduled_task {
                         $batchDeleted++;
                         $totalDeleted++;
                     } catch (\Throwable $e) {
-                        mtrace(
+                        $this->log(
                             'ERROR: User deletion failed for ' .
                             $matchedUser->username . ': ' . $e->getMessage()
                         );
@@ -295,7 +355,7 @@ class user_cleanup extends \core\task\scheduled_task {
 
                 // Dry runs must never update cleanup statuses.
                 if ($dryrun) {
-                    mtrace(
+                    $this->log(
                         'DRY RUN: No users deleted and no statuses updated for this batch.'
                     );
                     continue;
@@ -305,7 +365,7 @@ class user_cleanup extends \core\task\scheduled_task {
                 if ($batchDeletionFailed) {
                     $totalFailedBatches++;
 
-                    mtrace(
+                    $this->log(
                         'STATUS UNCHANGED: At least one user deletion failed ' .
                         'or was skipped for safety.'
                     );
@@ -314,7 +374,7 @@ class user_cleanup extends \core\task\scheduled_task {
                 }
 
                 if ($batchDeleted === 0) {
-                    mtrace(
+                    $this->log(
                         'STATUS UNCHANGED: No users were deleted in live mode.'
                     );
                     continue;
@@ -362,14 +422,14 @@ class user_cleanup extends \core\task\scheduled_task {
 
                     $totalSuccessfulBatches++;
 
-                    mtrace('STATUS UPDATED: user_cleanup_status = success for program "' . $program . '" and batch "' . $batch . '".');
+                    $this->log('STATUS UPDATED: user_cleanup_status = success for program "' . $program . '" and batch "' . $batch . '".');
 
-                    mtrace('STATUS UPDATED: ' . $cleanupMessage);
+                    $this->log('STATUS UPDATED: ' . $cleanupMessage);
 
                 } catch (\Throwable $e) {
                     $totalFailedBatches++;
 
-                    mtrace(
+                    $this->log(
                         'ERROR: Users were deleted, but status update failed: ' .
                         $e->getMessage()
                     );
@@ -377,22 +437,21 @@ class user_cleanup extends \core\task\scheduled_task {
             } catch (\Throwable $e) {
                 $totalFailedBatches++;
 
-                mtrace('ERROR: User lookup failed: ' . $e->getMessage());
+                $this->log('ERROR: User lookup failed: ' . $e->getMessage());
                 continue;
             }
         }
 
         // Step 7: Summary.
-        mtrace('========================================');
-        mtrace('User cleanup cron completed.');
-        mtrace('Execution mode: ' . ($dryrun ? 'DRY RUN' : 'LIVE'));
-        mtrace('Matching users found: ' . $totalCandidates);
-        mtrace('Users deleted: ' . $totalDeleted);
-        mtrace('Successful batch status updates: ' . $totalSuccessfulBatches);
-        mtrace('Failed batches: ' . $totalFailedBatches);
+        $this->log('========================================');
+        $this->log('Execution mode: ' . ($dryrun ? 'DRY RUN' : 'LIVE'));
+        $this->log('Matching users found: ' . $totalCandidates);
+        $this->log('Users deleted: ' . $totalDeleted);
+        $this->log('Successful batch status updates: ' . $totalSuccessfulBatches);
+        $this->log('Failed batches: ' . $totalFailedBatches);
 
         if ($dryrun) {
-            mtrace('DRY RUN COMPLETE: No database changes were intentionally made.');
+            $this->log('DRY RUN COMPLETE: No database changes were intentionally made.');
         }
     }
 

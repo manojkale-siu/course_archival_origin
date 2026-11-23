@@ -6,7 +6,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Provision the database tables required by Course Migrator Origin.
  */
-function xmldb_local_coursemigrator_install(): void {
+function xmldb_local_coursemigrator_origin_install(): void {
     global $DB;
 
     $manager = $DB->get_manager();
@@ -34,6 +34,6 @@ function xmldb_local_coursemigrator_install(): void {
 /**
  * Resume an interrupted installation. The table and field checks make this repeatable.
  */
-function xmldb_local_coursemigrator_install_recovery(): void {
-    xmldb_local_coursemigrator_install();
+function xmldb_local_coursemigrator_origin_install_recovery(): void {
+    xmldb_local_coursemigrator_origin_install();
 }
