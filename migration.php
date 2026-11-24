@@ -134,6 +134,10 @@ echo $OUTPUT->header();
     </a>
 </div>
 
+<p class="alert alert-info">
+    <?= get_string('processhelp', 'local_coursemigrator_origin') ?>
+</p>
+
 <div class="alert alert-warning approval-notice mb-3" role="status">
     <div class="approval-marquee">
         <span>

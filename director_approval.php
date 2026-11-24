@@ -758,6 +758,10 @@ echo $OUTPUT->header();
 
     </div>
 
+    <p class="alert alert-info">
+        <?= get_string('processhelp', 'local_coursemigrator_origin') ?>
+    </p>
+
     <?php if ($successmessage !== ''): ?>
         <div class="alert alert-success">
             <?php echo s($successmessage); ?>

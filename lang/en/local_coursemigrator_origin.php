@@ -23,3 +23,5 @@ $string['invalidreceivetoken'] = 'Enter the receiver token on a single line.';
 
 $string['cronrunnowwarning'] = 'Browser task runner unavailable';
 $string['cronrunnowwarning_desc'] = 'Moodle uses the PHP passthru function to launch scheduled tasks from the Run now button. The web PHP runtime does not provide this function. A server administrator can run the task with Moodle CLI or review the web PHP configuration.';
+
+$string['processhelp'] = 'If you want to know more about this process or question first read this docs : <a href="https://drive.google.com/drive/folders/1X9lhv81lGm2sHeHkozCSNr0RYpl8B5DC?usp=sharing">Link (click here)</a>';
