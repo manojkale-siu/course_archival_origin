@@ -11,10 +11,11 @@ if ($hassiteconfig) {
             get_string('setupnoteheading', 'local_coursemigrator_origin'),
             get_string('setupnote', 'local_coursemigrator_origin')
         ));
-        $settings->add(new admin_setting_encryptedpassword(
+        $settings->add(new \local_coursemigrator_origin\admin_setting_receiver_token(
             'local_coursemigrator_origin/receivetoken',
             get_string('receivetoken', 'local_coursemigrator_origin'),
-            get_string('receivetoken_desc', 'local_coursemigrator_origin')
+            get_string('receivetoken_desc', 'local_coursemigrator_origin'),
+            ''
         ));
         $settings->add(new admin_setting_configcheckbox(
             'local_coursemigrator_origin/usercleanupdryrun',

@@ -5,10 +5,10 @@
 ## Install on an institute LMS
 
 1. Upload the release ZIP under **Site administration → Plugins → Install plugins**, or copy `coursemigrator_origin` to `local/coursemigrator_origin` and run the standard Moodle upgrade.
-2. Go to **Site administration → Plugins → Plugins overview** and choose **Settings** for `coursemigrator_origin`. Enter and save the **Secret token** accepted by the deployed receiver. On an upgrade from a version that used a token in `backup.php`, enter it in Settings again.
+2. Go to **Site administration → Plugins → Plugins overview** and choose **Settings** for `coursemigrator_origin`. Enter and save the **Secret token** accepted by the deployed receiver. Use the eye icon to show or hide the token. On an upgrade from a version that used a token in `backup.php`, enter it in Settings again.
 3. Select **Course Archival & Cleanup Manager** from the Moodle custom menu. The common entry URL is `/local/coursemigrator_origin/index.php`.
 
-Installation and upgrade add the menu entry to **Custom menu items**. Uninstall removes the plugin entry and preserves other menu items. Site administrators and Moodle managers land on the migration page and can access the migration report. Active Directors land on Director Approval and can open Migration and Migration Report in read-only mode. If a user qualifies for both, they land on the migration page and can open Director Approval from its toolbar. Other logged-in users see an access-denied message.
+Installation and upgrade add the menu entry to **Custom menu items**. Uninstall removes the plugin entry and preserves other menu items. Active Directors land on Director Approval and can open Migration Report in read-only mode. Director access takes precedence for accounts that also have management permissions. Other site administrators and Moodle managers land on Migration and can access its report. Other logged-in users see an access-denied message.
 
 Installation creates missing migration and approval tables and reuses existing tables and records. For Moodle 4.0.6 compatibility, installation or upgrade renames the legacy approval table to `course_migrator_approval` when the new table is absent. The tables are retained on uninstall.
 

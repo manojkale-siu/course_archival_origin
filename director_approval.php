@@ -752,14 +752,9 @@ echo $OUTPUT->header();
             </p>
         </div>
 
-        <div class="d-flex flex-wrap gap-2">
-            <a href="<?= new moodle_url('/local/coursemigrator_origin/migration.php') ?>" class="btn btn-secondary">
-                <?= get_string('migration', 'local_coursemigrator_origin') ?>
-            </a>
-            <a href="<?= new moodle_url('/local/coursemigrator_origin/coursemigrator_report.php') ?>" class="btn btn-secondary">
-                <?= get_string('migrationreport', 'local_coursemigrator_origin') ?>
-            </a>
-        </div>
+        <a href="<?= new moodle_url('/local/coursemigrator_origin/coursemigrator_report.php') ?>" class="btn btn-secondary">
+            <?= get_string('migrationreport', 'local_coursemigrator_origin') ?>
+        </a>
 
     </div>
 

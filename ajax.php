@@ -18,7 +18,7 @@ use local_coursemigrator_origin\access;
 require_once(__DIR__ . '/../../config.php');
 
 require_login();
-access::require_view(true);
+access::require_management(true);
 
 global $DB;
 

@@ -32,7 +32,7 @@ global $DB, $OUTPUT, $PAGE;
 // $PAGE->set_url(new moodle_url('/coursemigrator/report.php'));
 $PAGE->set_url(new moodle_url('/local/coursemigrator_origin/coursemigrator_report.php'));
 $PAGE->set_context(context_system::instance());
-access::require_view();
+access::require_report_view();
 $canmanage = access::can_manage();
 // $PAGE->set_title('Course Migrator');
 // $PAGE->set_heading('Course Migration Report');
@@ -460,7 +460,9 @@ echo $OUTPUT->header();
     <div class="d-flex justify-content-right align-items-center mb-3">
         <!--<h3>Course Migration Report</h3>-->
 
-        <a href="<?php echo new moodle_url('/local/coursemigrator_origin/migration.php'); ?>"
+        <a href="<?php echo new moodle_url(
+            $canmanage ? '/local/coursemigrator_origin/migration.php' : '/local/coursemigrator_origin/director_approval.php'
+        ); ?>"
            class="btn btn-secondary">
             Back
         </a>

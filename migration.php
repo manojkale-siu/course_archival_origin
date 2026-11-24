@@ -25,8 +25,7 @@ $context = context_system::instance();
 
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/local/coursemigrator_origin/migration.php'));
-access::require_view();
-$canmanage = access::can_manage();
+access::require_management();
 // $PAGE->set_title('Course Migrator');
 $PAGE->set_title('Course Archival & Cleanup Manager');
 // $PAGE->set_heading('Course Migrator');
@@ -133,11 +132,6 @@ echo $OUTPUT->header();
     <a class="btn btn-secondary" href="<?= new moodle_url('/local/coursemigrator_origin/coursemigrator_report.php') ?>">
         <?= get_string('migrationreport', 'local_coursemigrator_origin') ?>
     </a>
-    <?php if (access::is_director()): ?>
-        <a class="btn btn-secondary" href="<?= new moodle_url('/local/coursemigrator_origin/director_approval.php') ?>">
-            <?= get_string('directorapproval', 'local_coursemigrator_origin') ?>
-        </a>
-    <?php endif; ?>
 </div>
 
 <div class="alert alert-warning approval-notice mb-3" role="status">
@@ -208,15 +202,11 @@ echo $OUTPUT->header();
     <div id="selected-courses">None</div>
 </div>
 
-<?php if ($canmanage): ?>
-    <div class="mt-3">
-        <button type="button" id="backup-course" class="btn btn-primary">
-            Backup Selected Courses
-        </button>
-    </div>
-<?php else: ?>
-    <p class="mt-3"><?= get_string('migrationreadonly', 'local_coursemigrator_origin') ?></p>
-<?php endif; ?>
+<div class="mt-3">
+    <button type="button" id="backup-course" class="btn btn-primary">
+        Backup Selected Courses
+    </button>
+</div>
 
 
 <?php
