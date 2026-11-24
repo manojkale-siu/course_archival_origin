@@ -6,6 +6,13 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $settings = new admin_settingpage('local_coursemigrator_origin_settings', get_string('pluginname', 'local_coursemigrator_origin'));
     if ($ADMIN->fulltree) {
+        if (!function_exists('passthru')) {
+            $settings->add(new admin_setting_heading(
+                'local_coursemigrator_origin/cronrunnowwarning',
+                get_string('cronrunnowwarning', 'local_coursemigrator_origin'),
+                get_string('cronrunnowwarning_desc', 'local_coursemigrator_origin')
+            ));
+        }
         $settings->add(new admin_setting_heading(
             'local_coursemigrator_origin/setupnote',
             get_string('setupnoteheading', 'local_coursemigrator_origin'),

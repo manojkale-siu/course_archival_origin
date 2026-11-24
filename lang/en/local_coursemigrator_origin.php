@@ -20,3 +20,6 @@ $string['setupnoteheading'] = 'Setup note';
 $string['setupnote'] = 'Save the R-LMS receiver secret token before sending course backups. If a token was previously set in backup.php, enter it here after upgrading.';
 $string['overviewnote'] = 'Set the R-LMS receiver secret token in Settings before sending backups.';
 $string['invalidreceivetoken'] = 'Enter the receiver token on a single line.';
+
+$string['cronrunnowwarning'] = 'Browser task runner unavailable';
+$string['cronrunnowwarning_desc'] = 'Moodle uses the PHP passthru function to launch scheduled tasks from the Run now button. The web PHP runtime does not provide this function. A server administrator can run the task with Moodle CLI or review the web PHP configuration.';

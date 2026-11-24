@@ -21,3 +21,15 @@ Moodle registers **Course Migrator user cleanup** automatically. The implementat
 Each run appends timestamped entries to `logs/user_cleanup_cron.log` beside `public_html`. On layouts without a `public_html` ancestor, the task uses `logs` inside Moodle's data directory. The Moodle cron account needs write access to the log directory and file.
 
 The new scheduled task starts in dry-run mode. Review its output before disabling **Run user cleanup in dry-run mode** to allow account deletion.
+
+### Running cleanup manually
+
+Moodle 4.0.6 uses PHP `passthru()` to start its CLI runner from the browser **Run now** button. If the browser reports `Call to undefined function core\task\passthru()`, check `disable_functions` in **Site administration → Server → PHP info**. The hosting administrator controls whether that function is available to web PHP.
+
+With server access, run the following from the Moodle directory as the same OS user that runs Moodle cron. Confirm the plugin is in dry-run mode if you only want to test it.
+
+```sh
+php admin/cli/scheduled_task.php --execute='\local_coursemigrator_origin\task\user_cleanup_cron'
+```
+
+The regular Moodle CLI cron does not use the browser launcher. Check the task's **Last run** and **Logs** in Scheduled tasks to verify execution.
