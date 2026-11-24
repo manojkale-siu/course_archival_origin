@@ -6,7 +6,7 @@ namespace local_coursemigrator_origin;
 defined('MOODLE_INTERNAL') || die();
 
 final class access {
-    /** Check system-level permission to manage migrations and view reports. */
+    /** Check system-level permission to run migrations and export reports. */
     public static function can_manage(): bool {
         return has_capability('local/coursemigrator_origin:manage', \context_system::instance());
     }
@@ -15,6 +15,13 @@ final class access {
     public static function require_management(bool $json = false): void {
         if (!self::can_manage()) {
             self::deny('managementaccessdenied', $json);
+        }
+    }
+
+    /** Require permission to view the migration interface or report. */
+    public static function require_view(bool $json = false): void {
+        if (!self::can_manage() && !self::is_director()) {
+            self::deny('entryaccessdenied', $json);
         }
     }
 

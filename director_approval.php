@@ -752,10 +752,14 @@ echo $OUTPUT->header();
             </p>
         </div>
 
-        <?php if (access::can_manage()): ?>
-            <a href="<?php echo new moodle_url('/local/coursemigrator_origin/coursemigrator_report.php'); ?>"
-               class="btn btn-secondary">Back to Report</a>
-        <?php endif; ?>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="<?= new moodle_url('/local/coursemigrator_origin/migration.php') ?>" class="btn btn-secondary">
+                <?= get_string('migration', 'local_coursemigrator_origin') ?>
+            </a>
+            <a href="<?= new moodle_url('/local/coursemigrator_origin/coursemigrator_report.php') ?>" class="btn btn-secondary">
+                <?= get_string('migrationreport', 'local_coursemigrator_origin') ?>
+            </a>
+        </div>
 
     </div>
 

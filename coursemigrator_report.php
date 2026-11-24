@@ -32,7 +32,8 @@ global $DB, $OUTPUT, $PAGE;
 // $PAGE->set_url(new moodle_url('/coursemigrator/report.php'));
 $PAGE->set_url(new moodle_url('/local/coursemigrator_origin/coursemigrator_report.php'));
 $PAGE->set_context(context_system::instance());
-access::require_management();
+access::require_view();
+$canmanage = access::can_manage();
 // $PAGE->set_title('Course Migrator');
 // $PAGE->set_heading('Course Migration Report');
 $PAGE->set_title('Course Archival & Cleanup Manager');
@@ -179,6 +180,7 @@ $where_sql = empty($where)
 $download = optional_param('download', 0, PARAM_BOOL);
 
 if ($download) {
+    access::require_management();
     $batchsize = 500;
     $offset = 0;
 
@@ -458,7 +460,7 @@ echo $OUTPUT->header();
     <div class="d-flex justify-content-right align-items-center mb-3">
         <!--<h3>Course Migration Report</h3>-->
 
-        <a href="<?php echo new moodle_url('/local/coursemigrator_origin/'); ?>"
+        <a href="<?php echo new moodle_url('/local/coursemigrator_origin/migration.php'); ?>"
            class="btn btn-secondary">
             Back
         </a>
@@ -641,13 +643,11 @@ echo $OUTPUT->header();
                         Reset
                     </a>
                     
-                    <button
-                        type="submit"
-                        name="download"
-                        value="1"
-                        class="btn btn-success">
-                        Download Excel (CSV)
-                    </button>
+                    <?php if ($canmanage): ?>
+                        <button type="submit" name="download" value="1" class="btn btn-success">
+                            Download Excel (CSV)
+                        </button>
+                    <?php endif; ?>
     
                 </div>
     

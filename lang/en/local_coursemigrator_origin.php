@@ -20,3 +20,6 @@ $string['receivetoken_desc'] = 'Enter the shared token accepted by the R-LMS arc
 $string['setupnoteheading'] = 'Setup note';
 $string['setupnote'] = 'Save the R-LMS receiver secret token before sending course backups. If a token was previously set in backup.php, enter it here after upgrading.';
 $string['overviewnote'] = 'Set the R-LMS receiver secret token in Settings before sending backups.';
+
+$string['migration'] = 'Migration';
+$string['migrationreadonly'] = 'You can view approved courses and migration records. Backup is available to users with migration management permission.';

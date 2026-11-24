@@ -25,7 +25,8 @@ $context = context_system::instance();
 
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/local/coursemigrator_origin/migration.php'));
-access::require_management();
+access::require_view();
+$canmanage = access::can_manage();
 // $PAGE->set_title('Course Migrator');
 $PAGE->set_title('Course Archival & Cleanup Manager');
 // $PAGE->set_heading('Course Migrator');
@@ -207,11 +208,15 @@ echo $OUTPUT->header();
     <div id="selected-courses">None</div>
 </div>
 
-<div class="mt-3">
-    <button type="button" id="backup-course" class="btn btn-primary">
-        Backup Selected Courses
-    </button>
-</div>
+<?php if ($canmanage): ?>
+    <div class="mt-3">
+        <button type="button" id="backup-course" class="btn btn-primary">
+            Backup Selected Courses
+        </button>
+    </div>
+<?php else: ?>
+    <p class="mt-3"><?= get_string('migrationreadonly', 'local_coursemigrator_origin') ?></p>
+<?php endif; ?>
 
 
 <?php
